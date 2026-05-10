@@ -819,10 +819,11 @@ function loadSiteData() {
    APPLY TEXTS
 ══════════════════════════════ */
 function applyTexts(texts) {
+  if (!texts) return;
   Object.keys(texts).forEach(key => {
     const el = document.getElementById(key);
-    if (el && !isAdmin) el.textContent = texts[key];
-    else if (el && isAdmin) {/* keep editable */}
+    if (!el || isAdmin) return;
+    el.innerHTML = String(texts[key] || '').replace(/\n/g, '<br>');
   });
 }
 
@@ -1054,11 +1055,9 @@ function enterAdmin() {
   document.body.classList.add('admin-mode');
   document.getElementById('adminBar').classList.add('show');
   document.querySelector('.nav').classList.add('with-admin');
-  // make editable
-  const editableIds = ['heroTag','intro1','intro2','intro3','intro4','aboutTitle','aboutDesc','aboutLead','aboutBody','aboutHours','coachingDesc','trainingDesc','tutoringDesc'];
-  editableIds.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.contentEditable = 'true';
+  // data-key 있는 모든 요소 자동으로 editable 처리
+  document.querySelectorAll('[data-key]').forEach(el => {
+    el.contentEditable = 'true';
   });
   renderDayflow(siteData.dayflow || DEFAULTS.dayflow);
   renderSpecialPrograms(siteData.specialPrograms || DEFAULTS.specialPrograms);
@@ -1078,10 +1077,12 @@ function exitAdmin() {
 ══════════════════════════════ */
 async function saveAll() {
   document.getElementById('savingDot').style.display = 'block';
-  // collect editable texts
+  // collect editable texts (data-key 있는 모든 요소 수집)
   const texts = {};
-  document.querySelectorAll('[data-key][contenteditable]').forEach(el => {
-    texts[el.dataset.key] = el.innerText;
+  document.querySelectorAll('[data-key]').forEach(el => {
+    if (el.dataset.key && !el.dataset.key.startsWith('dft-') && !el.dataset.key.startsWith('dfd-')) {
+      texts[el.dataset.key] = el.innerText.trim();
+    }
   });
   // collect dayflow from DOM
   const dayflow = [];
