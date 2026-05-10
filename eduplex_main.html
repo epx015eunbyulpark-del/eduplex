@@ -563,6 +563,7 @@ input[type=file].hidden{display:none;}
             <div class="pcard-sub">코칭 매니저 1:1 맞춤 상담</div>
             <div class="img-edit-overlay">
               <button class="img-edit-btn" onclick="event.stopPropagation();triggerUpload('coaching-img')">🖼 이미지 변경</button>
+              <button class="img-edit-btn" style="background:#e44;color:#fff;" onclick="event.stopPropagation();deleteProgramImg('coaching-img')">✕ 이미지 삭제</button>
             </div>
           </div>
           <div class="pcard-body">
@@ -578,6 +579,7 @@ input[type=file].hidden{display:none;}
             <div class="pcard-sub">체계적인 학습 계획 & 일일 관리</div>
             <div class="img-edit-overlay">
               <button class="img-edit-btn" onclick="event.stopPropagation();triggerUpload('training-img')">🖼 이미지 변경</button>
+              <button class="img-edit-btn" style="background:#e44;color:#fff;" onclick="event.stopPropagation();deleteProgramImg('training-img')">✕ 이미지 삭제</button>
             </div>
           </div>
           <div class="pcard-body">
@@ -593,6 +595,7 @@ input[type=file].hidden{display:none;}
             <div class="pcard-sub">원하는 과목 1:1 맞춤 수업</div>
             <div class="img-edit-overlay">
               <button class="img-edit-btn" onclick="event.stopPropagation();triggerUpload('tutoring-img')">🖼 이미지 변경</button>
+              <button class="img-edit-btn" style="background:#e44;color:#fff;" onclick="event.stopPropagation();deleteProgramImg('tutoring-img')">✕ 이미지 삭제</button>
             </div>
           </div>
           <div class="pcard-body">
@@ -992,6 +995,21 @@ function uploadNewsImg(i) {
 function addModalImg(key) {
   currentUploadTarget = {type:'modalImg', key};
   openImgUrlModal('자세히 보기 모달 이미지');
+}
+
+async function deleteProgramImg(key) {
+  if (!confirm('이미지를 삭제할까요?')) return;
+  const cardMap = {'coaching-img':'coachingCard','training-img':'trainingCard','tutoring-img':'tutoringCard'};
+  const cardId = cardMap[key];
+  if (cardId) {
+    const el = document.getElementById(cardId);
+    if (el) { el.style.backgroundImage = ''; el.style.backgroundSize = ''; el.style.backgroundPosition = ''; }
+  }
+  const imgs = siteData.programImages || {};
+  delete imgs[key];
+  siteData.programImages = imgs;
+  await db.ref('site/programImages/' + key).remove();
+  showToast('✓ 이미지가 삭제되었습니다!');
 }
 
 function openImgUrlModal(label) {
