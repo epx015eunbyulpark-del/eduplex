@@ -316,6 +316,39 @@ footer{background:var(--navy2);border-top:1px solid rgba(255,255,255,.06);paddin
 /* UPLOAD INPUT (hidden) */
 input[type=file].hidden{display:none;}
 
+/* LINK EDIT BUTTON */
+.link-edit-btn{
+  display:none;position:absolute;top:50%;right:10px;transform:translateY(-50%);
+  background:var(--gold);color:var(--navy);border:none;border-radius:5px;
+  font-size:11px;font-weight:700;padding:4px 9px;cursor:pointer;font-family:inherit;
+  white-space:nowrap;z-index:10;
+}
+.admin-mode .link-edit-btn{display:block;}
+.cc{position:relative;}
+.sns-btn-wrap{position:relative;flex:1;}
+.sns-btn-wrap .link-edit-btn{top:8px;right:8px;transform:none;}
+.admin-mode .sns-btn-wrap .link-edit-btn{display:block;}
+
+/* LINK EDIT MODAL */
+.link-modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1100;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+.link-modal-ov.on{display:flex;}
+.link-modal-box{background:#fff;border-radius:var(--r);max-width:480px;width:100%;padding:28px;box-shadow:0 20px 50px rgba(0,0,0,.3);}
+.link-modal-title{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+.link-modal-sub{font-size:12px;color:var(--gray);margin-bottom:20px;}
+.link-modal-lbl{font-size:11px;font-weight:700;color:var(--gray);margin-bottom:6px;display:block;letter-spacing:.04em;}
+.link-modal-inp{width:100%;padding:11px 13px;border:1px solid var(--light);border-radius:var(--rs);font-size:13px;color:var(--navy);font-family:inherit;margin-bottom:14px;transition:border-color .14s;}
+.link-modal-inp:focus{outline:none;border-color:var(--blue);}
+.link-modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:4px;}
+.link-modal-save{padding:9px 20px;border-radius:var(--rs);border:none;background:var(--navy);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+.link-modal-save:hover{background:var(--navy2);}
+.link-modal-cancel{padding:9px 16px;border-radius:var(--rs);border:1px solid var(--light);background:#fff;color:var(--gray);font-size:13px;cursor:pointer;font-family:inherit;}
+.link-modal-cancel:hover{background:var(--off);}
+
+/* NEWS LINK EDIT */
+.news-card{position:relative;}
+.news-link-btn{display:none;position:absolute;bottom:10px;right:10px;background:var(--gold);color:var(--navy);border:none;border-radius:5px;font-size:11px;font-weight:700;padding:4px 9px;cursor:pointer;font-family:inherit;z-index:10;}
+.admin-mode .news-link-btn{display:block;}
+
 /* EDIT OVERLAY on image cards */
 .img-edit-overlay{
   position:absolute;inset:0;background:rgba(0,0,0,.5);
@@ -617,17 +650,19 @@ input[type=file].hidden{display:none;}
     </div>
     <div class="contact-grid">
       <div style="display:flex;flex-direction:column;gap:12px;">
-        <a href="https://map.naver.com/p/entry/place/1253868162?lng=127.1259095&lat=37.6563028&placePath=%2Fbooking%3FbookingRedirectUrl%3Dhttps%3A%2F%2Fm.booking.naver.com%2Fbooking%2F6%2Fbizes%2F1123222%3Ftheme%3Dplace%26entry%3Dpll%26lang%3Dko%26entry%3Dpll&area=pll" target="_blank" class="cc">
+        <a href="https://map.naver.com/p/entry/place/1253868162?lng=127.1259095&lat=37.6563028&placePath=%2Fbooking%3FbookingRedirectUrl%3Dhttps%3A%2F%2Fm.booking.naver.com%2Fbooking%2F6%2Fbizes%2F1123222%3Ftheme%3Dplace%26entry%3Dpll%26lang%3Dko%26entry%3Dpll&area=pll" target="_blank" class="cc" id="ccNaver">
           <div class="cc-ico">🟢</div><div class="cc-lbl">NAVER 예약</div>
           <div class="cc-title">네이버 상담 예약</div>
           <div class="cc-desc">네이버에서 편하게 상담 시간을 예약하세요.</div>
           <div class="cc-arr">예약하러 가기 →</div>
+          <button class="link-edit-btn" onclick="event.preventDefault();event.stopPropagation();openLinkModal('ccNaver','네이버 예약 링크')">🔗 링크 수정</button>
         </a>
-        <a href="tel:031-522-4201" class="cc">
+        <a href="tel:031-522-4201" class="cc" id="ccPhone">
           <div class="cc-ico">📞</div><div class="cc-lbl">PHONE</div>
           <div class="cc-title">031-522-4201</div>
           <div class="cc-desc">평일 오후 1시 ~ 오후 10시에 전화 주시면 됩니다.</div>
           <div class="cc-arr">전화 연결 →</div>
+          <button class="link-edit-btn" onclick="event.preventDefault();event.stopPropagation();openLinkModal('ccPhone','전화번호 링크 (tel:번호)')">🔗 링크 수정</button>
         </a>
       </div>
       <div style="display:flex;flex-direction:column;gap:12px;">
@@ -639,8 +674,14 @@ input[type=file].hidden{display:none;}
           <div class="hrow"><span class="hday">방학 중</span><span class="htime">10:00 ~ 22:00</span></div>
         </div>
         <div class="sns-row">
-          <a href="https://www.instagram.com/eduplexbn/" target="_blank" class="sns-btn insta">📸 인스타그램</a>
-          <a href="https://blog.naver.com/dpeblee" target="_blank" class="sns-btn blog">📝 네이버 블로그</a>
+          <div class="sns-btn-wrap">
+            <a href="https://www.instagram.com/eduplexbn/" target="_blank" class="sns-btn insta" id="snsInsta">📸 인스타그램</a>
+            <button class="link-edit-btn" onclick="openLinkModal('snsInsta','인스타그램 링크')">🔗 수정</button>
+          </div>
+          <div class="sns-btn-wrap">
+            <a href="https://blog.naver.com/dpeblee" target="_blank" class="sns-btn blog" id="snsBlog">📝 네이버 블로그</a>
+            <button class="link-edit-btn" onclick="openLinkModal('snsBlog','블로그 링크')">🔗 수정</button>
+          </div>
         </div>
       </div>
     </div>
@@ -672,6 +713,23 @@ input[type=file].hidden{display:none;}
 <a href="tel:031-522-4201" class="phone-float">📞</a>
 <div class="toast" id="toast"></div>
 <input type="file" class="hidden" id="fileInput" accept="image/*"/>
+
+<!-- LINK EDIT MODAL -->
+<div class="link-modal-ov" id="linkModal">
+  <div class="link-modal-box">
+    <div class="link-modal-title">🔗 링크 수정</div>
+    <div class="link-modal-sub" id="linkModalSub">링크를 수정합니다.</div>
+    <label class="link-modal-lbl">링크 주소 (URL)</label>
+    <input class="link-modal-inp" id="linkModalInp" type="text" placeholder="https://..."/>
+    <div style="font-size:11px;color:var(--gray);margin-top:-8px;margin-bottom:14px;">
+      전화번호는 <code style="background:var(--off);padding:1px 5px;border-radius:3px;">tel:031-522-4201</code> 형식으로 입력하세요
+    </div>
+    <div class="link-modal-btns">
+      <button class="link-modal-cancel" onclick="closeLinkModal()">취소</button>
+      <button class="link-modal-save" onclick="saveLinkModal()">💾 저장</button>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL -->
 <div class="modal-ov" id="modal" onclick="closeModal(event)">
@@ -750,6 +808,7 @@ function loadSiteData() {
     const val = snap.val() || {};
     siteData = val;
     applyTexts(val.texts || DEFAULTS.texts);
+    applyLinks(val.links || {});
     renderDayflow(val.dayflow || DEFAULTS.dayflow);
     renderSpecialPrograms(val.specialPrograms || DEFAULTS.specialPrograms);
     renderNews(val.newsItems || DEFAULTS.newsItems);
@@ -872,7 +931,7 @@ function renderNews(items) {
   const grid = document.getElementById('newsGrid');
   if (!grid) return;
   grid.innerHTML = items.map((item, i) => `
-    <a href="${item.link||'#'}" target="_blank" class="news-card">
+    <a href="${item.link||'#'}" target="_blank" class="news-card" id="newsCard-${i}">
       <div class="news-thumb-wrap">
         ${item.img ? `<img src="${item.img}" alt="">` : `<span>${item.emoji||'📢'}</span>`}
         <button class="news-upload-btn" onclick="event.preventDefault();event.stopPropagation();uploadNewsImg(${i})">🖼 이미지 변경</button>
@@ -882,6 +941,7 @@ function renderNews(items) {
         <div class="news-title" id="ntitle-${i}" ${isAdmin?'contenteditable="true" onclick="event.preventDefault()"':''}>${esc(item.title)}</div>
         <div class="news-sub" id="nsub-${i}" ${isAdmin?'contenteditable="true" onclick="event.preventDefault()"':''}>${esc(item.sub)}</div>
       </div>
+      <button class="news-link-btn" onclick="event.preventDefault();event.stopPropagation();openLinkModal('newsCard-${i}','소식 카드 ${i+1} 링크')">🔗 링크 수정</button>
     </a>`).join('');
 }
 
@@ -922,6 +982,61 @@ document.getElementById('fileInput').addEventListener('change', async (e) => {
   }
   e.target.value = '';
 });
+
+/* ══════════════════════════════
+   LINK EDIT
+══════════════════════════════ */
+let linkEditTarget = null;
+
+function openLinkModal(elId, label) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  linkEditTarget = elId;
+  document.getElementById('linkModalSub').textContent = label + ' 수정';
+  document.getElementById('linkModalInp').value = el.getAttribute('href') || '';
+  document.getElementById('linkModal').classList.add('on');
+}
+function closeLinkModal() {
+  document.getElementById('linkModal').classList.remove('on');
+  linkEditTarget = null;
+}
+function saveLinkModal() {
+  if (!linkEditTarget) return;
+  const el = document.getElementById(linkEditTarget);
+  const newUrl = document.getElementById('linkModalInp').value.trim();
+  if (!newUrl) { showToast('링크를 입력해주세요.'); return; }
+  if (el) el.setAttribute('href', newUrl);
+
+  // 뉴스 카드 링크면 newsItems도 업데이트
+  const newsMatch = linkEditTarget.match(/^newsCard-(\d+)$/);
+  if (newsMatch) {
+    const idx = parseInt(newsMatch[1]);
+    const cur = (siteData.newsItems || DEFAULTS.newsItems.slice());
+    if (cur[idx]) {
+      cur[idx].link = newUrl;
+      siteData.newsItems = cur;
+      db.ref('site/newsItems').set(cur);
+    }
+  }
+
+  // Firebase에도 링크 저장
+  const links = siteData.links || {};
+  links[linkEditTarget] = newUrl;
+  siteData.links = links;
+  db.ref('site/links').update(links);
+
+  closeLinkModal();
+  showToast('✓ 링크가 저장되었습니다!');
+}
+
+// Firebase에서 링크 불러와서 적용
+function applyLinks(links) {
+  if (!links) return;
+  Object.keys(links).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.setAttribute('href', links[id]);
+  });
+}
 
 /* ══════════════════════════════
    ADMIN MODE
@@ -991,7 +1106,7 @@ async function saveAll() {
   }));
 
   try {
-    await db.ref('site').update({texts, dayflow, specialPrograms: spItems, newsItems});
+    await db.ref('site').update({texts, dayflow, specialPrograms: spItems, newsItems, links: siteData.links || {}});
     showToast('✓ 모든 변경사항이 저장되었습니다!');
   } catch(e) {
     showToast('⚠ 저장 실패: ' + e.message);
