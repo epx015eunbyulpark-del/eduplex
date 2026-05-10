@@ -933,10 +933,7 @@ function removeSpItem(i) {
   siteData.specialPrograms = cur;
   renderSpecialPrograms(cur);
 }
-function uploadSpImg(i) {
-  currentUploadTarget = {type:'sp', index:i};
-  document.getElementById('fileInput').click();
-}
+
 
 function openSpModal(i) {
   const items = siteData.specialPrograms || DEFAULTS.specialPrograms;
@@ -972,10 +969,7 @@ function renderNews(items) {
     </a>`).join('');
 }
 
-function uploadNewsImg(i) {
-  currentUploadTarget = {type:'news', index:i};
-  document.getElementById('fileInput').click();
-}
+
 
 /* ══════════════════════════════
    IMAGE URL 방식
