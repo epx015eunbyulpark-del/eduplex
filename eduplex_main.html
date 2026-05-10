@@ -714,6 +714,29 @@ input[type=file].hidden{display:none;}
 <div class="toast" id="toast"></div>
 <input type="file" class="hidden" id="fileInput" accept="image/*"/>
 
+<!-- IMAGE URL MODAL -->
+<div class="link-modal-ov" id="imgUrlModal">
+  <div class="link-modal-box">
+    <div class="link-modal-title">🖼️ 이미지 URL 입력</div>
+    <div class="link-modal-sub" id="imgUrlLabel">이미지 URL을 입력하세요.</div>
+    <label class="link-modal-lbl">이미지 주소 (URL)</label>
+    <input class="link-modal-inp" id="imgUrlInp" type="text" placeholder="https://..."/>
+    <div style="font-size:11px;color:var(--gray);margin-top:-8px;margin-bottom:6px;">
+      💡 GitHub에 이미지를 올리고 주소를 복사해서 붙여넣으세요!
+    </div>
+    <div style="font-size:11px;color:var(--blue2);margin-bottom:14px;line-height:1.7;">
+      GitHub 이미지 주소 만드는 법:<br>
+      1. GitHub → eduplex 저장소 → Add file → Upload files<br>
+      2. 이미지 파일 업로드 → Commit<br>
+      3. 파일 클릭 → <b>Raw</b> 버튼 클릭 → 주소창 URL 복사
+    </div>
+    <div class="link-modal-btns">
+      <button class="link-modal-cancel" onclick="closeImgUrlModal()">취소</button>
+      <button class="link-modal-save" onclick="saveImgUrl()">✅ 적용</button>
+    </div>
+  </div>
+</div>
+
 <!-- LINK EDIT MODAL -->
 <div class="link-modal-ov" id="linkModal">
   <div class="link-modal-box">
@@ -955,47 +978,57 @@ function uploadNewsImg(i) {
 }
 
 /* ══════════════════════════════
-   IMAGE UPLOAD
+   IMAGE URL 방식
 ══════════════════════════════ */
 let currentUploadTarget = null;
 
-// 프로그램 카드 이미지 업로드 트리거
+// 이미지 URL 입력 모달 열기
 function triggerUpload(key) {
   currentUploadTarget = {type:'program', key};
-  document.getElementById('fileInput').click();
+  openImgUrlModal('프로그램 카드 이미지');
+}
+function uploadSpImg(i) {
+  currentUploadTarget = {type:'sp', index:i};
+  openImgUrlModal('특별 프로그램 이미지');
+}
+function uploadNewsImg(i) {
+  currentUploadTarget = {type:'news', index:i};
+  openImgUrlModal('소식 이미지');
+}
+function addModalImg(key) {
+  currentUploadTarget = {type:'modalImg', key};
+  openImgUrlModal('자세히 보기 모달 이미지');
 }
 
-document.getElementById('fileInput').addEventListener('change', async (e) => {
-  const file = e.target.files[0];
-  if (!file || !currentUploadTarget) return;
-  showToast('이미지 업로드 중...');
-  try {
-    const path = `site/${currentUploadTarget.type}/${currentUploadTarget.index !== undefined ? currentUploadTarget.index : currentUploadTarget.key}_${Date.now()}`;
-    const ref = storage.ref(path);
-    await ref.put(file);
-    const url = await ref.getDownloadURL();
+function openImgUrlModal(label) {
+  document.getElementById('imgUrlLabel').textContent = label + ' URL 입력';
+  document.getElementById('imgUrlInp').value = '';
+  document.getElementById('imgUrlModal').classList.add('on');
+}
+function closeImgUrlModal() {
+  document.getElementById('imgUrlModal').classList.remove('on');
+}
 
+async function saveImgUrl() {
+  const url = document.getElementById('imgUrlInp').value.trim();
+  if (!url) { showToast('URL을 입력해주세요.'); return; }
+  if (!url.startsWith('http')) { showToast('올바른 URL을 입력해주세요. (https://로 시작)'); return; }
+
+  try {
     if (currentUploadTarget.type === 'program') {
-      // 프로그램 카드 배경 이미지로 적용
       const key = currentUploadTarget.key;
       const cardMap = {'coaching-img':'coachingCard','training-img':'trainingCard','tutoring-img':'tutoringCard'};
       const cardId = cardMap[key];
       if (cardId) {
         const top = document.getElementById(cardId);
-        if (top) top.style.backgroundImage = `url(${url})`;
+        if (top) { top.style.backgroundImage = `url(${url})`; top.style.backgroundSize='cover'; top.style.backgroundPosition='center'; }
       }
-      // Firebase에 저장
       const imgs = siteData.programImages || {};
       imgs[key] = url;
       siteData.programImages = imgs;
       await db.ref('site/programImages').update(imgs);
-      // 모달 이미지 목록에도 추가
-      const modalImgs = siteData.modalImages || {};
-      if (!modalImgs[key]) modalImgs[key] = [];
-      modalImgs[key].push(url);
-      siteData.modalImages = modalImgs;
-      await db.ref('site/modalImages').set(modalImgs);
-      showToast('✓ 이미지 업로드 완료! 모달에도 추가됐어요.');
+      showToast('✓ 이미지가 저장되었습니다!');
+
     } else if (currentUploadTarget.type === 'modalImg') {
       const key = currentUploadTarget.key;
       const modalImgs = siteData.modalImages || {};
@@ -1003,26 +1036,33 @@ document.getElementById('fileInput').addEventListener('change', async (e) => {
       modalImgs[key+'-img'].push(url);
       siteData.modalImages = modalImgs;
       await db.ref('site/modalImages').set(modalImgs);
-      openModal(key); // 모달 새로고침
+      closeImgUrlModal();
+      openModal(key);
       showToast('✓ 이미지 추가 완료!');
+      return;
+
     } else if (currentUploadTarget.type === 'sp') {
       const cur = (siteData.specialPrograms || []).slice();
       cur[currentUploadTarget.index].img = url;
       siteData.specialPrograms = cur;
+      siteData.specialPrograms = cur;
+      await db.ref('site/specialPrograms').set(cur);
       renderSpecialPrograms(cur);
-      showToast('✓ 이미지 업로드 완료!');
+      showToast('✓ 이미지가 저장되었습니다!');
+
     } else if (currentUploadTarget.type === 'news') {
       const cur = (siteData.newsItems || DEFAULTS.newsItems.slice());
       cur[currentUploadTarget.index].img = url;
       siteData.newsItems = cur;
+      await db.ref('site/newsItems').set(cur);
       renderNews(cur);
-      showToast('✓ 이미지 업로드 완료!');
+      showToast('✓ 이미지가 저장되었습니다!');
     }
   } catch(err) {
-    showToast('⚠ 업로드 실패: ' + err.message);
+    showToast('⚠ 저장 실패: ' + err.message);
   }
-  e.target.value = '';
-});
+  closeImgUrlModal();
+}
 
 /* ══════════════════════════════
    LINK EDIT
