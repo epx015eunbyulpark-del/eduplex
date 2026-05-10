@@ -557,7 +557,7 @@ input[type=file].hidden{display:none;}
       <div class="prog3">
         <!-- 상담 -->
         <div class="pcard" onclick="openModal('coaching')">
-          <div class="pcard-top" style="position:relative;">
+          <div class="pcard-top" id="coachingCard" style="position:relative;">
             <div class="pcard-ico">🗣</div>
             <div class="pcard-name">상담 (Coaching)</div>
             <div class="pcard-sub">코칭 매니저 1:1 맞춤 상담</div>
@@ -566,13 +566,13 @@ input[type=file].hidden{display:none;}
             </div>
           </div>
           <div class="pcard-body">
-            <p class="pcard-desc" id="coachingDesc" data-key="coachingDesc">코칭 매니저가 상담을 통해 컨디션과 이슈를 체크하고, 최적의 공부 마인드를 형성합니다.</p>
+            <p class="pcard-desc" id="coachingDesc" data-key="coachingDesc">학습법과 시간관리, 공부에 필요한 다양한 요소를 집중적으로 배우고 이해하는 1:1 상담 시간입니다.</p>
             <div class="pcard-more">자세히 보기 →</div>
           </div>
         </div>
         <!-- 관리 -->
         <div class="pcard" onclick="openModal('training')">
-          <div class="pcard-top" style="background:linear-gradient(135deg,#1a3a8c,#1a4fd6);position:relative;">
+          <div class="pcard-top" id="trainingCard" style="background:linear-gradient(135deg,#1a3a8c,#1a4fd6);position:relative;">
             <div class="pcard-ico">📋</div>
             <div class="pcard-name">관리 (Training)</div>
             <div class="pcard-sub">체계적인 학습 계획 & 일일 관리</div>
@@ -581,13 +581,13 @@ input[type=file].hidden{display:none;}
             </div>
           </div>
           <div class="pcard-body">
-            <p class="pcard-desc" id="trainingDesc" data-key="trainingDesc">팀스케쥴러 기반으로 학습을 체계적으로 기록하고, 당일 계획 점검 및 학습 포인트를 관리합니다.</p>
+            <p class="pcard-desc" id="trainingDesc" data-key="trainingDesc">셀프리더, 팀스케줄, 포트폴리오, 주간시간표 등 관리 도구를 활용해 자기주도학습 습관을 체계적으로 훈련합니다.</p>
             <div class="pcard-more">자세히 보기 →</div>
           </div>
         </div>
         <!-- 개별지도 -->
         <div class="pcard" onclick="openModal('tutoring')">
-          <div class="pcard-top" style="background:linear-gradient(135deg,#0f5a44,#0e8a5f);position:relative;">
+          <div class="pcard-top" id="tutoringCard" style="background:linear-gradient(135deg,#0f5a44,#0e8a5f);position:relative;">
             <div class="pcard-ico">✏️</div>
             <div class="pcard-name">개별지도 (Tutoring)</div>
             <div class="pcard-sub">원하는 과목 1:1 맞춤 수업</div>
@@ -596,7 +596,7 @@ input[type=file].hidden{display:none;}
             </div>
           </div>
           <div class="pcard-body">
-            <p class="pcard-desc" id="tutoringDesc" data-key="tutoringDesc">원하는 과목의 1:1 튜터링으로 매니저가 직접 학습 계획을 수립하고 교재별 진도를 관리합니다.</p>
+            <p class="pcard-desc" id="tutoringDesc" data-key="tutoringDesc">튜터가 학생 개별 진도와 전략에 따라 1:3 순회지도하는 90분 수업. 5분 수업과 10분 자습의 황금비율.</p>
             <div class="pcard-more">자세히 보기 →</div>
           </div>
         </div>
@@ -778,19 +778,21 @@ const DEFAULTS = {
     aboutLead:'별내고, 별가람고, 퇴계원고, 한국삼육고\n별가람중, 한별중, 한국삼육중, 한삼중, 화접중\n별내동 인근학교 전문 학습관리 학원입니다.',
     aboutBody:'에듀플렉스는 단순한 학원이 아닙니다. 상담(Coaching), 관리(Training), 개별지도(Tutoring) 세 가지 프로그램이 유기적으로 연결되어 학생 한 명 한 명의 학습 습관과 성적 향상을 함께 만들어갑니다.',
     aboutHours:'평일 13:00 ~ 22:00 / 토요일 11:00 ~ 19:00\n일요일 휴무 (*시험 3~4주 전 오픈) / 방학 중 10:00 ~ 22:00',
-    coachingDesc:'코칭 매니저가 상담을 통해 컨디션과 이슈를 체크하고, 최적의 공부 마인드를 형성합니다.',
-    trainingDesc:'팀스케쥴러 기반으로 학습을 체계적으로 기록하고, 당일 계획 점검 및 학습 포인트를 관리합니다.',
-    tutoringDesc:'원하는 과목의 1:1 튜터링으로 매니저가 직접 학습 계획을 수립하고 교재별 진도를 관리합니다.',
+    coachingDesc:'학습법과 시간관리, 공부에 필요한 다양한 요소를 집중적으로 배우고 이해하는 1:1 상담 시간입니다.',
+    trainingDesc:'셀프리더, 팀스케줄, 포트폴리오, 주간시간표 등 관리 도구를 활용해 자기주도학습 습관을 체계적으로 훈련합니다.',
+    tutoringDesc:'튜터가 학생 개별 진도와 전략에 따라 1:3 순회지도하는 90분 수업. 5분 수업과 10분 자습의 황금비율.',
   },
   dayflow: [
-    {t:'등원 및 화재준 제출',d:'개인 기기 입고 / 스마트폰·태블릿·PC 입실 시 제출'},
-    {t:'문자상담',d:'코칭 매니저와 상담 통해 컨디션 및 이슈 체크'},
-    {t:'계획서 작성',d:'팀스케쥴러 기반 블로피리티 기록 / 당일 학습 포인트 기재'},
-    {t:'학습 / 자기주도 학습',d:'집중 학습 4시간 이상 목표 / 교재·학습법·노트작성법 코칭'},
-    {t:'1:1 정기상담',d:'주 1~2회 심층 면담 / 동기부여·공부 마인드·진로상담'},
-    {t:'개별지도 수업',d:'원하는 과목 1:1 튜터링 / 학습계획·교재별 진도 관리'},
-    {t:'데일리체크',d:'당일 학습 계획 달성도 점검 / 매니저의 핵점으로 정리 마무리'},
-    {t:'하원',d:'당일 성취도·학습선택·향후 계획 부모님께 공유'},
+    {t:'등원카드 찍기',d:'정해진 등원시간에 등원하여 출결카드를 찍습니다. (학부모님 문자전송)'},
+    {t:'휴대폰 제출',d:'담당매니저님에게 전자기기를 반납합니다.'},
+    {t:'셀프리더 작성',d:'셀프리더(일일플래너)를 계획표에 맞게 작성하며 하루 일과를 세웁니다.'},
+    {t:'스타트체크',d:'셀프리더, 교재, 1010 노트를 챙겨서 담당 매니저님에게 스타트체크를 받습니다.'},
+    {t:'셀프스터디',d:'학습실에서 자기주도학습을 시작합니다. 일일 4시간 이상 학습을 진행합니다.'},
+    {t:'상담 진행',d:'주1회 50분, 월 200분 1:1 상담이 상담실에서 진행됩니다.'},
+    {t:'개별지도 수업',d:'1:1 학습전략과 1:3 수업방식으로 쌍방향 역질문 수업이 진행됩니다.'},
+    {t:'데일리체크',d:'계획대로 학습했는지 역질문으로 이해도체크를 받습니다.'},
+    {t:'엔딩체크',d:'담당매니저의 수행도 체크, 오늘 학습의 간략한 피드백을 받는 하원 전 마지막 체크입니다.'},
+    {t:'하원카드 찍기',d:'출결카드를 찍고 귀가합니다. 내일 만나요!'},
   ],
   specialPrograms: [],
   newsItems: [
@@ -809,6 +811,7 @@ function loadSiteData() {
     siteData = val;
     applyTexts(val.texts || DEFAULTS.texts);
     applyLinks(val.links || {});
+    applyProgramImages(val.programImages || {});
     renderDayflow(val.dayflow || DEFAULTS.dayflow);
     renderSpecialPrograms(val.specialPrograms || DEFAULTS.specialPrograms);
     renderNews(val.newsItems || DEFAULTS.newsItems);
@@ -956,28 +959,65 @@ function uploadNewsImg(i) {
 ══════════════════════════════ */
 let currentUploadTarget = null;
 
+// 프로그램 카드 이미지 업로드 트리거
+function triggerUpload(key) {
+  currentUploadTarget = {type:'program', key};
+  document.getElementById('fileInput').click();
+}
+
 document.getElementById('fileInput').addEventListener('change', async (e) => {
   const file = e.target.files[0];
   if (!file || !currentUploadTarget) return;
   showToast('이미지 업로드 중...');
   try {
-    const path = `site/${currentUploadTarget.type}/${currentUploadTarget.index || currentUploadTarget.key}_${Date.now()}`;
+    const path = `site/${currentUploadTarget.type}/${currentUploadTarget.index !== undefined ? currentUploadTarget.index : currentUploadTarget.key}_${Date.now()}`;
     const ref = storage.ref(path);
     await ref.put(file);
     const url = await ref.getDownloadURL();
 
-    if (currentUploadTarget.type === 'sp') {
+    if (currentUploadTarget.type === 'program') {
+      // 프로그램 카드 배경 이미지로 적용
+      const key = currentUploadTarget.key;
+      const cardMap = {'coaching-img':'coachingCard','training-img':'trainingCard','tutoring-img':'tutoringCard'};
+      const cardId = cardMap[key];
+      if (cardId) {
+        const top = document.getElementById(cardId);
+        if (top) top.style.backgroundImage = `url(${url})`;
+      }
+      // Firebase에 저장
+      const imgs = siteData.programImages || {};
+      imgs[key] = url;
+      siteData.programImages = imgs;
+      await db.ref('site/programImages').update(imgs);
+      // 모달 이미지 목록에도 추가
+      const modalImgs = siteData.modalImages || {};
+      if (!modalImgs[key]) modalImgs[key] = [];
+      modalImgs[key].push(url);
+      siteData.modalImages = modalImgs;
+      await db.ref('site/modalImages').set(modalImgs);
+      showToast('✓ 이미지 업로드 완료! 모달에도 추가됐어요.');
+    } else if (currentUploadTarget.type === 'modalImg') {
+      const key = currentUploadTarget.key;
+      const modalImgs = siteData.modalImages || {};
+      if (!modalImgs[key+'-img']) modalImgs[key+'-img'] = [];
+      modalImgs[key+'-img'].push(url);
+      siteData.modalImages = modalImgs;
+      await db.ref('site/modalImages').set(modalImgs);
+      openModal(key); // 모달 새로고침
+      showToast('✓ 이미지 추가 완료!');
+    } else if (currentUploadTarget.type === 'sp') {
       const cur = (siteData.specialPrograms || []).slice();
       cur[currentUploadTarget.index].img = url;
       siteData.specialPrograms = cur;
       renderSpecialPrograms(cur);
+      showToast('✓ 이미지 업로드 완료!');
     } else if (currentUploadTarget.type === 'news') {
       const cur = (siteData.newsItems || DEFAULTS.newsItems.slice());
       cur[currentUploadTarget.index].img = url;
       siteData.newsItems = cur;
       renderNews(cur);
+      showToast('✓ 이미지 업로드 완료!');
     }
-    showToast('✓ 이미지 업로드 완료!');
   } catch(err) {
     showToast('⚠ 업로드 실패: ' + err.message);
   }
@@ -1031,6 +1071,20 @@ function saveLinkModal() {
 }
 
 // Firebase에서 링크 불러와서 적용
+function applyProgramImages(imgs) {
+  const cardMap = {'coaching-img':'coachingCard','training-img':'trainingCard','tutoring-img':'tutoringCard'};
+  Object.keys(cardMap).forEach(key => {
+    if (imgs[key]) {
+      const el = document.getElementById(cardMap[key]);
+      if (el) {
+        el.style.backgroundImage = `url(${imgs[key]})`;
+        el.style.backgroundSize = 'cover';
+        el.style.backgroundPosition = 'center';
+      }
+    }
+  });
+}
+
 function applyLinks(links) {
   if (!links) return;
   Object.keys(links).forEach(id => {
@@ -1128,9 +1182,43 @@ function openModal(key){
   const d=MODALS[key];if(!d)return;
   document.getElementById('mTitle').textContent=d.title;
   document.getElementById('mSub').textContent=d.sub;
-  document.getElementById('mBody').innerHTML=d.body;
+
+  // 모달 이미지 불러오기
+  const modalImgs = siteData.modalImages || {};
+  const imgs = modalImgs[key+'-img'] || [];
+  let imgHtml = '';
+  if (imgs.length) {
+    imgHtml = `<div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
+      ${imgs.map((url, i) => `
+        <div style="position:relative;flex:1;min-width:200px;">
+          <img src="${url}" style="width:100%;border-radius:var(--rs);display:block;"/>
+          ${isAdmin ? `<button onclick="deleteModalImg('${key}',${i})" style="position:absolute;top:6px;right:6px;background:rgba(200,0,0,.85);color:#fff;border:none;border-radius:5px;padding:4px 8px;font-size:11px;cursor:pointer;">✕ 삭제</button>` : ''}
+        </div>`).join('')}
+    </div>`;
+  }
+  const addBtn = isAdmin ? `<button onclick="addModalImg('${key}')" style="width:100%;padding:12px;border:2px dashed var(--light);border-radius:var(--rs);background:var(--off);color:var(--blue);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:14px;">＋ 이미지 추가</button>` : '';
+
+  document.getElementById('mBody').innerHTML = addBtn + imgHtml + d.body;
   document.getElementById('modal').classList.add('on');
   document.body.style.overflow='hidden';
+}
+
+let modalImgTarget = null;
+function addModalImg(key) {
+  modalImgTarget = key;
+  currentUploadTarget = {type:'modalImg', key};
+  document.getElementById('fileInput').click();
+}
+async function deleteModalImg(key, idx) {
+  if (!confirm('이미지를 삭제할까요?')) return;
+  const modalImgs = siteData.modalImages || {};
+  const arr = modalImgs[key+'-img'] || [];
+  arr.splice(idx, 1);
+  modalImgs[key+'-img'] = arr;
+  siteData.modalImages = modalImgs;
+  await db.ref('site/modalImages').set(modalImgs);
+  openModal(key);
+  showToast('✓ 이미지 삭제됨');
 }
 function closeModal(e){
   if(!e||e.target===document.getElementById('modal')){
